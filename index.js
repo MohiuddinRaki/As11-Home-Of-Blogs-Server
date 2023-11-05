@@ -28,7 +28,7 @@ async function run() {
     // await client.connect();
 
 
-    const userCollection = client.db("userDB").collection("user");
+    const userBlogCollection = client.db("userBlogDB").collection("userBlog");
     const addBlogCollection = client.db("addBlogDB").collection("addBlog");
 
 
@@ -47,10 +47,10 @@ async function run() {
   // });
 
   // for user:
-    app.post("/user", async (req, res) => {
-      const newUser = req.body;
-      console.log(newUser);
-      const result = await userCollection.insertOne(newUser);
+    app.post("/userBlog", async (req, res) => {
+      const newUserBlog = req.body;
+      console.log(newUserBlog);
+      const result = await userBlogCollection.insertOne(newUserBlog);
       res.send(result);
     });
 
