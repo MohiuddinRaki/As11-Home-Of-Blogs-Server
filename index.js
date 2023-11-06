@@ -29,6 +29,7 @@ async function run() {
     const userBlogCollection = client.db("userBlogDB").collection("userBlog");
     const addBlogCollection = client.db("addBlogDB").collection("addBlog");
     const wishlistCollection = client.db("wishlistDB").collection("wishlist");
+    const subscribingCollection = client.db("subscribingDB").collection("subscribing");
 
     // for all add Blogs:
     app.post("/addBlog", async (req, res) => {
@@ -79,6 +80,14 @@ async function run() {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const result = await wishlistCollection.deleteOne(query);
+      res.send(result);
+    });
+
+    // for NewsLetter Section:
+    app.post("/subscribing", async (req, res) => {
+      const newSubscribingEmail = req.body;
+      console.log(newSubscribingEmail);
+      const result = await subscribingCollection.insertOne(newSubscribingEmail);
       res.send(result);
     });
 
