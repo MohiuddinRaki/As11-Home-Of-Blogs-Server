@@ -29,8 +29,12 @@ async function run() {
     const userBlogCollection = client.db("userBlogDB").collection("userBlog");
     const addBlogCollection = client.db("addBlogDB").collection("addBlog");
     const wishlistCollection = client.db("wishlistDB").collection("wishlist");
-    const subscribingCollection = client.db("subscribingDB").collection("subscribing");
-
+    const subscribingCollection = client
+      .db("subscribingDB")
+      .collection("subscribing");
+    const userCommentsCollection = client
+      .db("userCommentsDB")
+      .collection("userComments");
     // for all add Blogs:
     app.post("/addBlog", async (req, res) => {
       const newAddBlog = req.body;
@@ -88,6 +92,20 @@ async function run() {
       const newSubscribingEmail = req.body;
       console.log(newSubscribingEmail);
       const result = await subscribingCollection.insertOne(newSubscribingEmail);
+      res.send(result);
+    });
+
+    // for User Comments in Details page:
+    app.post("/userComments", async (req, res) => {
+      const newUserComments = req.body;
+      console.log(newUserComments);
+      const result = await userCommentsCollection.insertOne(newUserComments);
+      res.send(result);
+    });
+
+    app.get("/userComments", async (req, res) => {
+      const cursor = userCommentsCollection.find();
+      const result = await cursor.toArray();
       res.send(result);
     });
 
