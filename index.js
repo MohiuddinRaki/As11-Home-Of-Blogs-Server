@@ -1,7 +1,7 @@
 const express = require("express");
 const cors = require("cors");
-const { MongoClient, ServerApiVersion } = require("mongodb");
-require('dotenv').config()
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
+require("dotenv").config();
 const app = express();
 const port = process.env.PORT || 5000;
 
@@ -9,9 +9,8 @@ const port = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
-const uri =
-  `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.rxjjt.mongodb.net/?retryWrites=true&w=majority`;
-  console.log(uri)
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.rxjjt.mongodb.net/?retryWrites=true&w=majority`;
+console.log(uri);
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
@@ -27,26 +26,63 @@ async function run() {
     // Connect the client to the server	(optional starting in v4.7)
     // await client.connect();
 
-
     const userBlogCollection = client.db("userBlogDB").collection("userBlog");
     const addBlogCollection = client.db("addBlogDB").collection("addBlog");
+    const wishlistCollection = client.db("wishlistDB").collection("wishlist");
 
+    // for all add Blogs:
+    app.post("/addBlog", async (req, res) => {
+      const newAddBlog = req.body;
+      console.log(newAddBlog);
+      const result = await addBlogCollection.insertOne(newAddBlog);
+      res.send(result);
+    });
 
-   // for all add Blogs:
-   app.post("/addBlog", async (req, res) => {
-    const newAddBlog = req.body;
-    console.log(newAddBlog);
-    const result = await addBlogCollection.insertOne(newAddBlog);
-    res.send(result);
-  });
+    app.get("/addBlog", async (req, res) => {
+      const cursor = addBlogCollection.find();
+      const result = await cursor.toArray();
+      res.send(result);
+    });
 
-  // app.get("/addBlog", async (req, res) => {
-  //   const cursor = productCollection.find();
-  //   const result = await cursor.toArray();
-  //   res.send(result);
-  // });
+    // for get specify Blog Details when click any blog:
+    app.get("/addBlog/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await addBlogCollection.findOne(query);
+      res.send(result);
+    });
 
-  // for user:
+    // Add to Wishlist:
+    app.post("/wishlist", async (req, res) => {
+      const newWishlist = req.body;
+      console.log(newWishlist);
+      const result = await wishlistCollection.insertOne(newWishlist);
+      res.send(result);
+    });
+
+    app.get("/wishlist", async (req, res) => {
+      const cursor = wishlistCollection.find();
+      const result = await cursor.toArray();
+      res.send(result);
+    });
+
+    // for get specify user added Wishlist when click any add to Wishlist button:
+    app.get("/wishlist/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = wishlistCollection.findOne(query);
+      res.send(result);
+    });
+
+    // for delete:
+    app.delete("/wishlist/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await wishlistCollection.deleteOne(query);
+      res.send(result);
+    });
+
+    // for user:
     app.post("/userBlog", async (req, res) => {
       const newUserBlog = req.body;
       console.log(newUserBlog);
