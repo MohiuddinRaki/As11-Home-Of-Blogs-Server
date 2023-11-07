@@ -35,6 +35,9 @@ async function run() {
     const userCommentsCollection = client
       .db("userCommentsDB")
       .collection("userComments");
+    const userFeedBacksCollection = client
+      .db("userFeedBacksDB")
+      .collection("userFeedBacks");
 
     // for all add Blogs:
     app.post("/addBlog", async (req, res) => {
@@ -127,6 +130,19 @@ async function run() {
 
     app.get("/userComments", async (req, res) => {
       const cursor = userCommentsCollection.find();
+      const result = await cursor.toArray();
+      res.send(result);
+    });
+    // for User FeedBack in Home page:
+    app.post("/userFeedBacks", async (req, res) => {
+      const newUserFeedBacks = req.body;
+      console.log(newUserFeedBacks);
+      const result = await userFeedBacksCollection.insertOne(newUserFeedBacks);
+      res.send(result);
+    });
+
+    app.get("/userFeedBacks", async (req, res) => {
+      const cursor = userFeedBacksCollection.find();
       const result = await cursor.toArray();
       res.send(result);
     });
