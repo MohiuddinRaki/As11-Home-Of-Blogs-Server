@@ -35,6 +35,7 @@ async function run() {
     const userCommentsCollection = client
       .db("userCommentsDB")
       .collection("userComments");
+
     // for all add Blogs:
     app.post("/addBlog", async (req, res) => {
       const newAddBlog = req.body;
@@ -46,6 +47,27 @@ async function run() {
     app.get("/addBlog", async (req, res) => {
       const cursor = addBlogCollection.find();
       const result = await cursor.toArray();
+      res.send(result);
+    });
+
+    // for update:
+    app.put("/addBlog/:id", async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const options = { upsert: true };
+      const updateBlog = req.body;
+      const blog = {
+        $set: {
+          category: updateBlog.category,
+          title: updateBlog.title,
+          shortDescription: updateBlog.shortDescription,
+          longDescription: updateBlog.longDescription,
+          imageUrl: updateBlog.imageUrl,
+          userEmail: updateBlog.userEmail,
+          dateTime: updateBlog.dateTime,
+        },
+      };
+      const result = await addBlogCollection.updateOne(filter, blog, options);
       res.send(result);
     });
 
