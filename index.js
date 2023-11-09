@@ -120,6 +120,12 @@ async function run() {
       res.send(result);
     });
 
+    app.get("/subscribing", async (req, res) => {
+      const cursor = subscribingCollection.find();
+      const result = await cursor.toArray();
+      res.send(result);
+    });
+
     // for User Comments in Details page:
     app.post("/userComments", async (req, res) => {
       const newUserComments = req.body;
